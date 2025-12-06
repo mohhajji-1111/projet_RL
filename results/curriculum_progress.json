@@ -1,0 +1,25 @@
+{
+  "current_stage": "BASIC_NAVIGATION",
+  "current_episode": 99,
+  "stage_config": {
+    "name": "Stage 1: Basic Navigation",
+    "episode_range": [
+      0,
+      500
+    ],
+    "description": "Learn basic movement and simple goal reaching"
+  },
+  "recent_performance": {
+    "avg_reward": -4113.1950425772375,
+    "success_rate": 0.0,
+    "collision_rate": 0.0,
+    "evaluation_window": 50
+  },
+  "progression_criteria": {
+    "min_success_rate": 0.7,
+    "evaluation_window": 50,
+    "min_avg_reward": 5.0,
+    "max_collision_rate": 0.3
+  },
+  "stage_history": []
+}

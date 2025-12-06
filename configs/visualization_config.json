@@ -1,0 +1,26 @@
+{
+  "comparison_runs": {
+    "DQN": "results/logs/dqn_training.json",
+    "Rainbow DQN": "results/logs/rainbow_training.json",
+    "Adaptive DQN": "results/logs/adaptive_training.json"
+  },
+  
+  "performance_runs": {
+    "DQN": "results/logs/dqn_training.json",
+    "Rainbow DQN": "results/logs/rainbow_training.json"
+  },
+  
+  "model_path": "trained_models/best_model.pt",
+  
+  "agent_path": "trained_models/dqn_agent.pt",
+  
+  "trajectory_log": "results/logs/trajectories.json",
+  
+  "rewards_file": "results/logs/rewards.txt",
+  
+  "trajectory_animations": {
+    "successful_run": "results/logs/trajectory_success.json",
+    "failed_run": "results/logs/trajectory_fail.json",
+    "best_episode": "results/logs/trajectory_best.json"
+  }
+}

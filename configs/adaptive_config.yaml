@@ -1,0 +1,78 @@
+# Adaptive Training Configuration with Curriculum Learning
+
+# Environment Settings
+environment:
+  width: 800
+  height: 600
+  robot_radius: 15.0
+  goal_radius: 20.0
+  max_speed: 5.0
+  max_steps: 1000
+  render_mode: null
+  
+  # Dynamic obstacles
+  use_dynamic_obstacles: true
+  num_obstacles: 5
+
+# Agent Settings
+agent:
+  type: "rainbow"
+  state_dim: 8
+  action_dim: 4
+  learning_rate: 0.00006
+  gamma: 0.99
+  tau: 0.005
+  hidden_dims: [512, 256]
+  use_noisy: true
+  device: "cuda"
+
+# Adaptive Training Settings
+training:
+  num_episodes: 2000
+  max_steps_per_episode: 1000
+  batch_size: 64
+  buffer_size: 150000
+  learning_starts: 2000
+  
+  # Prioritized replay
+  use_prioritized_replay: true
+  alpha: 0.6
+  beta_start: 0.4
+  beta_frames: 150000
+  
+  # Curriculum learning stages
+  curriculum_stages:
+    - episodes: 400
+      difficulty: "easy"
+      epsilon: 1.0
+      description: "No obstacles, close goal"
+      
+    - episodes: 600
+      difficulty: "medium"
+      epsilon: 0.5
+      description: "Static obstacles, medium distance"
+      
+    - episodes: 1000
+      difficulty: "hard"
+      epsilon: 0.1
+      description: "Dynamic obstacles, far goal"
+  
+  # Adaptive parameters
+  success_rate_threshold: 0.7
+  success_window: 20
+  
+  # Logging
+  log_interval: 10
+  save_interval: 100
+
+# Paths
+paths:
+  save_dir: "trained_models/adaptive"
+  log_dir: "results/logs"
+  figure_dir: "results/figures"
+  video_dir: "results/videos"
+
+# Experiment
+experiment:
+  name: "adaptive_curriculum"
+  seed: 42

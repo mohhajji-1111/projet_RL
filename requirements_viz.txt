@@ -1,0 +1,34 @@
+# Additional visualization requirements
+# Install with: pip install -r requirements_viz.txt
+
+# Real-time Dashboard
+dash>=2.14.0
+plotly>=5.17.0
+kaleido>=0.2.1  # For static image export
+
+# Animation
+matplotlib>=3.7.0
+imageio>=2.31.0
+imageio-ffmpeg>=0.4.9  # For MP4 export
+pillow>=10.0.0
+
+# Advanced plotting
+seaborn>=0.12.0
+
+# Statistical analysis
+scipy>=1.11.0
+
+# Network visualization
+networkx>=3.1
+
+# Data manipulation
+pandas>=2.0.0
+
+# 3D visualization
+mpl_toolkits>=3.7.0
+
+# Interactive plots
+ipywidgets>=8.1.0  # For Jupyter integration
+
+# Note: These are IN ADDITION to the base requirements.txt
+# Make sure you have the base dependencies installed first

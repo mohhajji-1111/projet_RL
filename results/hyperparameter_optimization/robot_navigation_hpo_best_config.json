@@ -1,0 +1,16 @@
+{
+  "num_layers": 4,
+  "hidden_dim_0": 512,
+  "hidden_dim_1": 128,
+  "hidden_dim_2": 512,
+  "hidden_dim_3": 128,
+  "learning_rate": 0.008715797913446522,
+  "batch_size": 64,
+  "gamma": 0.9763662600679688,
+  "epsilon_decay": 0.9909164715751888,
+  "buffer_size": 70000,
+  "target_update": 1000,
+  "use_dropout": true,
+  "dropout_rate": 0.431628816456467,
+  "use_lr_schedule": false
+}

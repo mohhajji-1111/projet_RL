@@ -1,0 +1,51 @@
+# Base Configuration for Robot Navigation RL
+
+# Environment Settings
+environment:
+  width: 800
+  height: 600
+  robot_radius: 15.0
+  goal_radius: 20.0
+  max_speed: 5.0
+  max_steps: 1000
+  render_mode: null  # 'human', 'rgb_array', or null
+
+# Agent Settings
+agent:
+  type: "dqn"  # 'dqn' or 'rainbow'
+  state_dim: 8
+  action_dim: 4
+  learning_rate: 0.0001
+  gamma: 0.99
+  tau: 0.005
+  hidden_dims: [256, 256]
+  device: "cuda"  # 'cuda' or 'cpu'
+
+# Training Settings
+training:
+  num_episodes: 1000
+  max_steps_per_episode: 1000
+  batch_size: 64
+  buffer_size: 100000
+  learning_starts: 1000
+  
+  # Epsilon-greedy exploration
+  epsilon_start: 1.0
+  epsilon_end: 0.01
+  epsilon_decay: 0.995
+  
+  # Logging
+  log_interval: 10
+  save_interval: 100
+  
+# Paths
+paths:
+  save_dir: "trained_models/basic"
+  log_dir: "results/logs"
+  figure_dir: "results/figures"
+  video_dir: "results/videos"
+
+# Experiment
+experiment:
+  name: "basic_dqn"
+  seed: 42
