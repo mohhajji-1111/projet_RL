@@ -1,0 +1,273 @@
+# ============================================================
+# Curiosity Agent Configuration (DQN + ICM)
+# ============================================================
+# Configuration for training a DQN agent with Intrinsic 
+# Curiosity Module for better exploration.
+#
+# Reference: Pathak et al. (2017)
+# "Curiosity-driven Exploration by Self-supervised Prediction"
+# ============================================================
+
+# Environment Configuration
+environment:
+  type: "navigation"
+  width: 800
+  height: 600
+  num_obstacles: 5
+  max_steps: 200
+  render: false
+  
+# Agent Configuration
+agent:
+  type: "curiosity"  # Use CuriosityAgent
+  
+  # Base DQN Parameters
+  learning_rate: 0.0001
+  gamma: 0.99          # Discount factor
+  tau: 0.005           # Target network update rate
+  
+  # Epsilon-greedy exploration
+  epsilon_start: 1.0
+  epsilon_end: 0.01
+  epsilon_decay: 0.995
+  
+  # Network architecture
+  hidden_sizes: [128, 128, 64]
+  
+  # Replay buffer
+  buffer_size: 50000
+  batch_size: 64
+  min_buffer_size: 1000
+  
+  # ICM Specific Parameters
+  # ========================
+  
+  # Intrinsic reward weight: r_total = r_ext + β * r_int
+  curiosity_beta: 0.2
+  # Higher β → more exploration
+  # Lower β → more exploitation
+  # Recommended: 0.2 for navigation, 0.5 for sparse rewards
+  
+  # Forward model loss scale
+  curiosity_eta: 1.0
+  # Weight of forward dynamics loss in ICM training
+  
+  # Inverse model loss scale  
+  curiosity_lambda: 0.1
+  # Weight of inverse dynamics loss in ICM training
+  
+  # Feature space dimension
+  feature_dim: 32
+  # Size of learned feature representation
+  # Too small → can't capture complexity
+  # Too large → overfitting
+  # Recommended: 32-64 for most tasks
+  
+  # ICM learning rate
+  icm_lr: 0.001
+  # Learning rate for ICM networks
+  # Usually similar to or slightly lower than DQN lr
+  
+  # Normalize intrinsic rewards
+  normalize_intrinsic: true
+  # Whether to normalize intrinsic rewards using running statistics
+  # Helps stabilize training
+
+# Training Configuration
+training:
+  total_episodes: 1500
+  eval_frequency: 100      # Evaluate every N episodes
+  save_frequency: 100      # Save checkpoint every N episodes
+  log_frequency: 10        # Log metrics every N episodes
+  
+  # Curriculum learning (progressive difficulty)
+  curriculum:
+    enabled: true
+    stages:
+      - episodes: 500
+        num_obstacles: 3
+        max_steps: 150
+      
+      - episodes: 500  
+        num_obstacles: 5
+        max_steps: 200
+      
+      - episodes: 500
+        num_obstacles: 7
+        max_steps: 250
+  
+  # Early stopping
+  early_stopping:
+    enabled: true
+    patience: 200           # Stop if no improvement for N episodes
+    min_reward: 150         # Minimum average reward to consider
+  
+# Evaluation Configuration
+evaluation:
+  num_episodes: 100
+  render: true
+  save_video: true
+  video_frequency: 10      # Save video every N eval episodes
+  compute_coverage: true   # Calculate state space coverage
+  
+# Visualization Configuration
+visualization:
+  enabled: true
+  
+  # Plots to generate
+  plot_training_curves: true
+  plot_intrinsic_rewards: true
+  plot_exploration_coverage: true
+  plot_curiosity_heatmap: true
+  plot_icm_losses: true
+  plot_reward_comparison: true
+  
+  # Plot settings
+  dpi: 300                 # Resolution
+  figsize: [10, 6]         # Figure size
+  style: "seaborn"         # Matplotlib style
+  save_format: "png"       # png, pdf, svg
+  
+# Logging Configuration
+logging:
+  enabled: true
+  level: "INFO"            # DEBUG, INFO, WARNING, ERROR
+  console: true
+  file: true
+  tensorboard: true
+  
+  # Metrics to log
+  metrics:
+    - episode_reward
+    - episode_steps
+    - success_rate
+    - intrinsic_reward
+    - forward_loss
+    - inverse_loss
+    - dqn_loss
+    - epsilon
+    - exploration_coverage
+    
+# Paths Configuration
+paths:
+  # Base directories
+  project_root: "."
+  data_dir: "data"
+  results_dir: "results"
+  
+  # Specific paths
+  models_dir: "results/models/curiosity"
+  logs_dir: "results/logs/curiosity"
+  figures_dir: "results/figures/curiosity"
+  videos_dir: "results/videos/curiosity"
+  checkpoints_dir: "results/checkpoints/curiosity"
+  
+  # File patterns
+  model_filename: "curiosity_agent_ep{episode}.pth"
+  best_model_filename: "best_model.pth"
+  final_model_filename: "final_model.pth"
+  log_filename: "training_log.csv"
+  config_filename: "config.yaml"
+
+# Reproducibility
+random_seed: 42
+deterministic: false       # Use deterministic algorithms (slower)
+
+# Performance
+device: "cuda"             # cuda, cpu, or auto
+num_workers: 4             # For data loading
+pin_memory: true           # Faster GPU transfer
+
+# Debugging
+debug:
+  enabled: false
+  check_gradients: false
+  profile: false
+  save_activations: false
+  
+# Experiment tracking
+experiment:
+  name: "curiosity_navigation"
+  tags: ["icm", "dqn", "exploration"]
+  notes: "Training curiosity agent on navigation task"
+  
+# Comparison with baseline
+baseline:
+  enabled: true
+  model_path: "results/models/dqn/best_model.pth"
+  compare_metrics:
+    - success_rate
+    - average_reward
+    - exploration_coverage
+    - episode_length
+
+# Advanced options
+advanced:
+  # Intrinsic reward clipping
+  clip_intrinsic_reward: true
+  intrinsic_reward_max: 1.0
+  
+  # Feature network regularization
+  feature_l2_weight: 0.0001
+  
+  # Prioritized experience replay
+  prioritized_replay: false
+  priority_alpha: 0.6
+  priority_beta: 0.4
+  
+  # Multi-step returns
+  n_step: 1
+  
+  # Noisy networks
+  noisy_nets: false
+  
+  # Distributional RL
+  distributional: false
+  num_atoms: 51
+  v_min: -10
+  v_max: 10
+
+# ============================================================
+# Usage Examples:
+# ============================================================
+# 
+# 1. Train with default settings:
+#    python scripts/train_curiosity.py --config configs/curiosity_config.yaml
+#
+# 2. Override episodes:
+#    python scripts/train_curiosity.py --config configs/curiosity_config.yaml --episodes 2000
+#
+# 3. Use CPU:
+#    python scripts/train_curiosity.py --config configs/curiosity_config.yaml --device cpu
+#
+# 4. Continue from checkpoint:
+#    python scripts/train_curiosity.py --config configs/curiosity_config.yaml --resume
+#
+# 5. Evaluate trained model:
+#    python scripts/evaluate_curiosity.py --model results/models/curiosity/best_model.pth
+#
+# ============================================================
+# Hyperparameter Tuning Guide:
+# ============================================================
+#
+# curiosity_beta:
+#   - Start with 0.2
+#   - Increase if agent doesn't explore enough
+#   - Decrease if agent ignores task rewards
+#
+# feature_dim:
+#   - 32 for simple environments
+#   - 64 for complex environments
+#   - Monitor forward/inverse losses
+#
+# icm_lr:
+#   - Usually 0.0001 - 0.001
+#   - Higher if ICM learns too slowly
+#   - Lower if ICM overfits
+#
+# curiosity_eta / curiosity_lambda:
+#   - Balance forward vs inverse model
+#   - Default ratio: 10:1 (eta=1.0, lambda=0.1)
+#   - Adjust based on inverse model accuracy
+#
+# ============================================================
