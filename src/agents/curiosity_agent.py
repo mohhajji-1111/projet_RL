@@ -165,6 +165,11 @@ class CuriosityAgent(DQNAgent):
         self.icm_lr = config.get('icm_lr', 0.001)
         self.normalize_intrinsic = config.get('normalize_intrinsic', True)
         
+        # Epsilon for exploration
+        self.epsilon = config.get('epsilon_start', 1.0)
+        self.epsilon_end = config.get('epsilon_end', 0.01)
+        self.epsilon_decay = config.get('epsilon_decay', 0.995)
+        
         # Build ICM networks
         self.feature_network = FeatureNetwork(state_dim, self.feature_dim).to(self.device)
         self.inverse_model = InverseModel(self.feature_dim, action_dim).to(self.device)
@@ -191,6 +196,20 @@ class CuriosityAgent(DQNAgent):
         
         self.logger.info(f"Curiosity Agent initialized with β={self.curiosity_beta}, "
                         f"feature_dim={self.feature_dim}")
+    
+    def select_action(self, state: np.ndarray) -> int:
+        """Select action using epsilon-greedy policy"""
+        if np.random.random() < self.epsilon:
+            return np.random.randint(self.action_dim)
+        
+        with torch.no_grad():
+            state_tensor = torch.FloatTensor(state).unsqueeze(0).to(self.device)
+            q_values = self.q_network(state_tensor)
+            return q_values.argmax(dim=1).item()
+    
+    def update_epsilon(self):
+        """Decay epsilon after each episode"""
+        self.epsilon = max(self.epsilon_end, self.epsilon * self.epsilon_decay)
     
     def compute_intrinsic_reward(
         self,

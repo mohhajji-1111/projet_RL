@@ -135,6 +135,9 @@ def train():
         forward_losses.append(icm_stats['forward_loss'])
         inverse_losses.append(icm_stats['inverse_loss'])
         
+        # Update epsilon
+        agent.update_epsilon()
+        
         # Progress
         pbar.set_postfix({
             'Reward': f"{episode_reward:.2f}",
