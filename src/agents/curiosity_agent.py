@@ -307,22 +307,16 @@ class CuriosityAgent(DQNAgent):
             'total_icm_loss': icm_loss.item()
         }
     
-    def train_step(self, batch_size: int = 64) -> Dict[str, float]:
+    def train_step(self, batch: dict) -> Dict[str, float]:
         """
         Perform one training step (DQN + ICM)
         
         Args:
-            batch_size: Number of samples to train on
+            batch: Dictionary containing states, actions, rewards, next_states, dones
             
         Returns:
             Dictionary with training losses
         """
-        if len(self.replay_buffer) < batch_size:
-            return {'dqn_loss': 0.0, 'forward_loss': 0.0, 'inverse_loss': 0.0}
-        
-        # Sample batch from replay buffer
-        batch = self.replay_buffer.sample(batch_size)
-        
         # Convert to tensors
         states = torch.FloatTensor(batch['states']).to(self.device)
         actions = torch.LongTensor(batch['actions']).to(self.device)
